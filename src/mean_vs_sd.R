@@ -1,0 +1,84 @@
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+# mean vs sd
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+suppressPackageStartupMessages({
+  library("ggplot2")
+  library("hexbin")
+  library("scattermore")
+  library("glue")
+  library("showtext")
+})
+
+font_add("Source Sans Pro", "~/.fonts/source-sans-pro/SourceSansPro-Regular.ttf")
+showtext_auto()
+
+ncores <- 16L
+w <- 150
+h <- 120
+
+print(glue("{format(Sys.time())} -- loading data"))
+res <- qs::qread("dat/mod_obs.qs", nthreads = ncores)
+
+# > head(res)
+# # A tibble: 6 × 5
+#   slide      x      y mean_susc sd_susc
+#   <lgl>  <int>  <int>     <dbl>   <dbl>
+# 1 FALSE 352810 358480     0.425  0.0453
+# 2 FALSE 352620 358470     0.281  0.0181
+# 3 FALSE 352630 358470     0.357  0.0400
+# 4 FALSE 352640 358470     0.335  0.0408
+# 5 FALSE 352650 358470     0.340  0.0399
+# 6 FALSE 352660 358470     0.343  0.0446
+
+# scatterplot (slow despite using scattermore) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+print(glue("{format(Sys.time())} -- creating scatterplot"))
+p <- ggplot(res, aes(x = mean_susc, y = sd_susc)) +
+  geom_scattermore(alpha = 0.1) +
+  xlab("mean") +
+  ylab("standard deviation") +
+  theme_linedraw() +
+  theme(
+    text = element_text(
+      family = "Source Sans Pro",
+      colour = "black",
+      size = 20
+    )
+  )
+ggsave("plt/mean-vs-sd_scatter.png", p, width = w, height = h, units = "mm")
+
+# hexbin ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+print(glue("{format(Sys.time())} -- creating hexbin plot"))
+p <- ggplot(res, aes(x = mean_susc, y = sd_susc)) +
+  geom_hex() +
+  xlab("mean") +
+  ylab("standard deviation") +
+  theme_linedraw() +
+  theme(
+    text = element_text(
+      family = "Source Sans Pro",
+      colour = "black",
+      size = 20
+    )
+  )
+ggsave(glue("plt/mean-vs-sd_hex.png"), p, width = w, height = h, units = "mm", dpi = 300)
+
+# 2d bins ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+print(glue("{format(Sys.time())} -- creating 2d bin plot"))
+p <- ggplot(res, aes(x = mean_susc, y = sd_susc)) +
+  geom_bin2d(bins = 50) +
+  xlab("mean") +
+  ylab("standard deviation") +
+  theme_linedraw() +
+  theme(
+    text = element_text(
+      family = "Source Sans Pro",
+      colour = "black",
+      size = 20
+    )
+  )
+ggsave(glue("plt/mean-vs-sd_2d-bin.png"), p, width = w, height = h, units = "mm", dpi = 300)
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+print(glue("{format(Sys.time())} -- Done \\o/"))
