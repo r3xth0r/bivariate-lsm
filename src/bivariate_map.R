@@ -1,3 +1,5 @@
+#!/usr/bin/R
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 # create bivariate map
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -32,20 +34,8 @@ sfc_as_cols <- function(x, geometry, names = c("x", "y"), drop_geometry = FALSE)
   out
 }
 
-xmin <- 430000
-xmax <- 440000
-ymin <- 318000
-ymax <- 323000
-
-# width:height
-(xmax - xmin) / (ymax - ymin)
-
-tic()
-aoi <- st_sfc(st_polygon(list(cbind(c(xmin, xmax, xmax, xmin, xmin), c(ymin, ymin, ymax, ymax, ymin)))), crs = 3416)
-res <- qs::qread("dat/random_forest_prediction_mean_sd_sf.qs", nthreads = 16L) |>
-  st_intersection(aoi)
-saveRDS(res, "dat/biscale_test_aoi.rds")
-toc()
+res <- read_stars("dat/processed/susceptibility.tif") |>
+  st_as_sf(as_points = TRUE)
 
 # the most suitable palettes seem to be c("Brown", "PurpleOr", "GrPink", "DkViolet")
 dims <- 3
