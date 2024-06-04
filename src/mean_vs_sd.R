@@ -55,6 +55,7 @@ p <- ggplot(res, aes(x = mean_susc, y = sd_susc)) +
   geom_hex() +
   xlab("mean") +
   ylab("standard deviation") +
+  scale_fill_viridis_c(option = "inferno") +
   theme_linedraw() +
   theme(
     text = element_text(
@@ -71,6 +72,7 @@ p <- ggplot(res, aes(x = mean_susc, y = sd_susc)) +
   geom_bin2d(bins = 50) +
   xlab("mean") +
   ylab("standard deviation") +
+  scale_fill_viridis_c(option = "inferno") +
   theme_linedraw() +
   theme(
     text = element_text(
