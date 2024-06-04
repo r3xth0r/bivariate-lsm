@@ -1,3 +1,5 @@
+#!/usr/bin/R
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 # mean vs sd
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -18,7 +20,7 @@ w <- 150
 h <- 120
 
 print(glue("{format(Sys.time())} -- loading data"))
-res <- qs::qread("dat/mod_obs.qs", nthreads = ncores)
+res <- qs::qread("dat/interim/mod_obs.qs", nthreads = ncores)
 
 # > head(res)
 # # A tibble: 6 × 5
