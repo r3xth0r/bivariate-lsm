@@ -13,4 +13,4 @@ susc_s <- read_stars("dat/interim/susceptibility_sd.tif") |>
 
 susc <- c(susc_m, susc_s) |>
   merge(name = "metric")
-write_stars(obj = susc, dsn = "dat/processed/susceptility.tif")
+write_stars(obj = susc, dsn = "dat/processed/susceptibility.tif")
