@@ -33,10 +33,28 @@ res <- qs::qread("dat/interim/mod_obs.qs", nthreads = ncores)
 # 5 FALSE 352650 358470     0.340  0.0399
 # 6 FALSE 352660 358470     0.343  0.0446
 
+# quadratic regression ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+tmp <- res |>
+  dplyr::select(s = sd_susc, m = mean_susc) |>
+  dplyr::mutate(m2 = m^2) |>
+  as.matrix()
+
+get_quadratic_regression <- function(mat) {
+  coefs <- coef(lm.fit(x = mat[, c("m", "m2")], y = mat[, "s"]))
+  # coefs <- coef(.lm.fit(cbind(1,mat[,c("m","m2")]), mat[,"s"]))
+  x <- seq(0, 1, length = 1000)
+  y <- coefs["m"] * x + coefs["m2"] * x^2
+  tibble::tibble(x, y)
+}
+
+regr <- get_quadratic_regression(tmp)
+
 # scatterplot (slow despite using scattermore) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 print(glue("{format(Sys.time())} -- creating scatterplot"))
 p <- ggplot(res, aes(x = mean_susc, y = sd_susc)) +
   geom_scattermore(alpha = 0.1) +
+  geom_line(data = regr, aes(x = x, y = y), color = "white") +
   xlab("mean") +
   ylab("standard deviation") +
   theme_linedraw() +
@@ -54,6 +72,7 @@ print(glue("{format(Sys.time())} -- creating hexbin plot"))
 brks <- 20^(0:4)
 p <- ggplot(res, aes(x = mean_susc, y = sd_susc)) +
   geom_hex() +
+  geom_line(data = regr, aes(x = x, y = y)) +
   xlab("mean") +
   ylab("standard deviation") +
   scale_fill_viridis_c(name = "counts (log)", option = "inferno", breaks = brks, trans = "log") +
@@ -71,6 +90,7 @@ ggsave(glue("plt/mean-vs-sd_hex.png"), p, width = w, height = h, units = "mm", d
 print(glue("{format(Sys.time())} -- creating 2d bin plot"))
 p <- ggplot(res, aes(x = mean_susc, y = sd_susc)) +
   geom_bin2d(bins = 50) +
+  geom_line(data = regr, aes(x = x, y = y)) +
   xlab("mean") +
   ylab("standard deviation") +
   scale_fill_viridis_c(name = "counts (log)", option = "inferno", breaks = brks, trans = "log") +
