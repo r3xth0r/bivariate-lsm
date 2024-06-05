@@ -62,6 +62,14 @@ get_quadratic_regression <- function(tbl) {
 
 regr <- get_quadratic_regression(tmp)
 
+# check with lm() / RcppEigen::fastLm()
+lmmod <- lm(s ~ m + m2 - 1, data = tmp)
+coef(regr)
+coef(lmmod)
+summary(lmmod)$r.squared
+rho <- cor(lmmod$fitted.values, tmp$s)
+rho^2
+
 # scatterplot (slow despite using scattermore) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 print(glue("{format(Sys.time())} -- creating scatterplot"))
 p <- ggplot(res, aes(x = mean_susc, y = sd_susc)) +
