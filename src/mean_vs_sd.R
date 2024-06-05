@@ -51,11 +51,12 @@ ggsave("plt/mean-vs-sd_scatter.png", p, width = w, height = h, units = "mm")
 
 # hexbin ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 print(glue("{format(Sys.time())} -- creating hexbin plot"))
+brks <- 20^(0:4)
 p <- ggplot(res, aes(x = mean_susc, y = sd_susc)) +
   geom_hex() +
   xlab("mean") +
   ylab("standard deviation") +
-  scale_fill_viridis_c(option = "inferno") +
+  scale_fill_viridis_c(name = "counts (log)", option = "inferno", breaks = brks, trans = "log") +
   theme_linedraw() +
   theme(
     text = element_text(
@@ -72,7 +73,7 @@ p <- ggplot(res, aes(x = mean_susc, y = sd_susc)) +
   geom_bin2d(bins = 50) +
   xlab("mean") +
   ylab("standard deviation") +
-  scale_fill_viridis_c(option = "inferno") +
+  scale_fill_viridis_c(name = "counts (log)", option = "inferno", breaks = brks, trans = "log") +
   theme_linedraw() +
   theme(
     text = element_text(
