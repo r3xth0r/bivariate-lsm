@@ -37,15 +37,27 @@ res <- qs::qread("dat/interim/mod_obs.qs", nthreads = ncores)
 
 tmp <- res |>
   dplyr::select(s = sd_susc, m = mean_susc) |>
-  dplyr::mutate(m2 = m^2) |>
-  as.matrix()
+  dplyr::mutate(m2 = m^2)
 
-get_quadratic_regression <- function(mat) {
-  coefs <- coef(lm.fit(x = mat[, c("m", "m2")], y = mat[, "s"]))
-  # coefs <- coef(.lm.fit(cbind(1,mat[,c("m","m2")]), mat[,"s"]))
+get_quadratic_regression <- function(tbl) {
+  mat <- as.matrix(tbl)
+  X <- cbind(mat[, c("m", "m2")])
+  y <- mat[, "s"]
+  mod <- lm.fit(x = X, y = y)
+  ybar <- mean(y)
+  SSE <- sum((mod$fitted.values - ybar)^2)
+  SSR <- sum(mod$residuals^2)
+  SST <- sum((y - ybar)^2)
+  R2 <- 1 - (SSR / SST)
+  coefs <- coef(mod)
   x <- seq(0, 1, length = 1000)
   y <- coefs["m"] * x + coefs["m2"] * x^2
-  tibble::tibble(x, y)
+  out <- list(
+    coefficients = coefs,
+    xyline = tibble::tibble(x, y),
+    R2 = R2
+  )
+  return(out)
 }
 
 regr <- get_quadratic_regression(tmp)
@@ -54,7 +66,7 @@ regr <- get_quadratic_regression(tmp)
 print(glue("{format(Sys.time())} -- creating scatterplot"))
 p <- ggplot(res, aes(x = mean_susc, y = sd_susc)) +
   geom_scattermore(alpha = 0.1) +
-  geom_line(data = regr, aes(x = x, y = y), color = "white") +
+  geom_line(data = regr$xyline, aes(x = x, y = y), color = "white") +
   xlab("mean") +
   ylab("standard deviation") +
   theme_linedraw() +
@@ -72,7 +84,7 @@ print(glue("{format(Sys.time())} -- creating hexbin plot"))
 brks <- 20^(0:4)
 p <- ggplot(res, aes(x = mean_susc, y = sd_susc)) +
   geom_hex() +
-  geom_line(data = regr, aes(x = x, y = y)) +
+  geom_line(data = regr$xyline, aes(x = x, y = y)) +
   xlab("mean") +
   ylab("standard deviation") +
   scale_fill_viridis_c(name = "counts (log)", option = "inferno", breaks = brks, trans = "log") +
@@ -90,7 +102,7 @@ ggsave(glue("plt/mean-vs-sd_hex.png"), p, width = w, height = h, units = "mm", d
 print(glue("{format(Sys.time())} -- creating 2d bin plot"))
 p <- ggplot(res, aes(x = mean_susc, y = sd_susc)) +
   geom_bin2d(bins = 50) +
-  geom_line(data = regr, aes(x = x, y = y)) +
+  geom_line(data = regr$xyline, aes(x = x, y = y)) +
   xlab("mean") +
   ylab("standard deviation") +
   scale_fill_viridis_c(name = "counts (log)", option = "inferno", breaks = brks, trans = "log") +
