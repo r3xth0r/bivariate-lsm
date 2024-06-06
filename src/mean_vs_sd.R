@@ -39,36 +39,40 @@ tmp <- res |>
   dplyr::select(s = sd_susc, m = mean_susc) |>
   dplyr::mutate(m2 = m^2)
 
-get_quadratic_regression <- function(tbl) {
+fit_quadratic_regression <- function(tbl, intercept = FALSE) {
   mat <- as.matrix(tbl)
-  X <- cbind(mat[, c("m", "m2")])
   y <- mat[, "s"]
+  X <- mat[, c("m", "m2")]
+  if (intercept) {
+    X <- cbind(1, X)
+  }
   mod <- lm.fit(x = X, y = y)
+  yhat <- mod$fitted.values
   ybar <- mean(y)
-  SSE <- sum((mod$fitted.values - ybar)^2)
-  SSR <- sum(mod$residuals^2)
+  MSS <- sum(yhat^2)
+  SSE <- sum((yhat - ybar)^2)
   SST <- sum((y - ybar)^2)
-  R2 <- 1 - (SSR / SST)
+  SSR <- sum(mod$residuals^2)
+  if (intercept) {
+    R2 <- 1 - (SSR / SST)
+  } else {
+    # cave
+    R2 <- MSS / (MSS + SSR)
+  }
+  rho <- cor(yhat, y)
   coefs <- coef(mod)
   x <- seq(0, 1, length = 1000)
   y <- coefs["m"] * x + coefs["m2"] * x^2
   out <- list(
     coefficients = coefs,
     xyline = tibble::tibble(x, y),
-    R2 = R2
+    R2 = R2,
+    rho = rho
   )
   return(out)
 }
 
-regr <- get_quadratic_regression(tmp)
-
-# check with lm() / RcppEigen::fastLm()
-lmmod <- lm(s ~ m + m2 - 1, data = tmp)
-coef(regr)
-coef(lmmod)
-summary(lmmod)$r.squared
-rho <- cor(lmmod$fitted.values, tmp$s)
-rho^2
+regr <- fit_quadratic_regression(tmp, intercept = FALSE)
 
 # scatterplot (slow despite using scattermore) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 print(glue("{format(Sys.time())} -- creating scatterplot"))
