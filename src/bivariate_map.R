@@ -52,6 +52,37 @@ sfc_as_cols <- function(x, geometry, names = c("x", "y"), drop_geometry = FALSE)
   out
 }
 
+custom_bi_class <- function(dat, brks, style = "quantile", dim = 3) {
+  #' Create custom classes for bivariate maps
+  #'
+  #' @description Computes custom classes for bivariate maps based using
+  #' user-defined breaks for the susceptibility and styles supported by biscale
+  #' for the uncertainty.
+  #'
+  # This is handled by biscale:::bi_var_cut() which effectively uses
+  # classInt::classIntervals()$brks to derive the breaks which are passed on to
+  # base::cut().
+  #'
+  #' @param dat data.frame-like object to add a new column `bi_class` to.
+  #' @param brks numeric vector specifying class splits for the mean.
+  #' @param style A string identifying the style used to calculate breaks.
+  #' See `bi_class()` for details.
+  #' @param dim integer denoting the dimensions of the palette.
+  #' See `bi_class()` for details.
+  #'
+  #' @return Input object with new column `bi_class`.
+  res_point |>
+    bi_class(x = susceptibility, y = uncertainty, style = style, dim = dim) |>
+    mutate(
+      bc_s = cut(susceptibility, breaks = brks, include.lowest = TRUE, dig.lab = 3),
+      bc_u = cut(uncertainty, breaks = classInt::classIntervals(
+        uncertainty, n = dim, style = style
+      )$brks, include.lowest = TRUE, dig.lab = 3)
+    ) |>
+    mutate(across(starts_with("bc_"), as.integer)) |>
+    unite("bi_class", bc_s:bc_u, sep = "-")
+}
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 # explore color palettes
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -68,42 +99,22 @@ ggsave(filename = "plt/biscale_pals.png", plot = p_biscale, width = 133, height 
 # data preparation
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
+susc_brks <- c(0, 0.4481, 0.6096, 1)
+
 # sf w/ point
 res_point <- read_stars("dat/processed/susceptibility.tif") |>
   st_as_sf(as_points = TRUE) |>
   rename(susceptibility = mean, uncertainty = sd)
 
-# TODO: different class thresholds [argument "style" in `biscale::bi_class()`]
-susc_brks <- c(0, 0.4481, 0.6096, 1)
-# This is handled by biscale:::bi_var_cut() which effectively uses
-# classInt::classIntervals()$brks to derive the breaks which are passed on to
-# base::cut().
-bi_class_breaks(res_point, x = susceptibility, y = uncertainty, style = "quantile", dim = dims)
-classInt::classIntervals(res_point$uncertainty, n = dims, style = "quantile")$brks
-
-tst <- res_point |>
-  st_drop_geometry() |>
-  as_tibble() |>
-  bi_class(x = susceptibility, y = uncertainty, style = "quantile", dim = dims) |>
-  mutate(
-    bc_s = cut(susceptibility, breaks = susc_brks, include.lowest = TRUE, dig.lab = 3),
-    bc_u = cut(uncertainty, breaks = classInt::classIntervals(
-      uncertainty,
-      n = dims, style = "quantile"
-    )$brks, include.lowest = TRUE, dig.lab = 3)
-  ) |>
-  mutate(across(starts_with("bc_"), as.integer)) |>
-  unite("bi_cl", bc_s:bc_u, sep = "-")
-
 # sf w/ poly
 res_poly <- res_point |>
   st_rasterize() |>
   st_as_sf() |>
-  bi_class(x = susceptibility, y = uncertainty, style = "quantile", dim = dims)
+  custom_bi_class(brks = susc_brks)
 
 # simple tibble w/o geometry
 res_point <- res_point |>
-  bi_class(x = susceptibility, y = uncertainty, style = "quantile", dim = dims) |>
+  custom_bi_class(brks = susc_brks) |>
   sfc_as_cols(drop_geometry = TRUE) |>
   as_tibble()
 
