@@ -13,8 +13,12 @@ suppressPackageStartupMessages({
   library("ggspatial")
   library("patchwork")
   library("biscale")
+  library("showtext")
   library("tictoc")
 })
+
+font_add("Source Sans Pro", "~/.fonts/source-sans-pro/SourceSansPro-Regular.ttf")
+showtext_auto()
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 # helper functions
@@ -129,7 +133,8 @@ map_raster <- ggplot() +
   theme_linedraw() +
   coord_sf(crs = 3416, expand = 0) +
   xlab("") +
-  ylab("")
+  ylab("") +
+  theme(text = element_text(size = 30))
 
 # map_raster <- map_raster +
 #   annotation_scale(
@@ -162,7 +167,8 @@ legend <- bi_legend(
   xlab = "susceptibility",
   ylab = "uncertainty",
   size = 8
-)
+) +
+  theme(text = element_text(size = 20))
 
 p <- map_raster + legend + plot_layout(widths = c(7, 1))
 
