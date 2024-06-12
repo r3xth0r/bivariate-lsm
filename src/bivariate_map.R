@@ -8,6 +8,7 @@ suppressPackageStartupMessages({
   library("sf")
   library("stars")
   library("dplyr")
+  library("tidyr")
   library("ggplot2")
   library("ggspatial")
   library("patchwork")
@@ -67,12 +68,32 @@ ggsave(filename = "plt/biscale_pals.png", plot = p_biscale, width = 133, height 
 # data preparation
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-# TODO: different class thresholds [argument "style" in `biscale::bi_class()`]
-
 # sf w/ point
 res_point <- read_stars("dat/processed/susceptibility.tif") |>
   st_as_sf(as_points = TRUE) |>
   rename(susceptibility = mean, uncertainty = sd)
+
+# TODO: different class thresholds [argument "style" in `biscale::bi_class()`]
+susc_brks <- c(0, 0.4481, 0.6096, 1)
+# This is handled by biscale:::bi_var_cut() which effectively uses
+# classInt::classIntervals()$brks to derive the breaks which are passed on to
+# base::cut().
+bi_class_breaks(res_point, x = susceptibility, y = uncertainty, style = "quantile", dim = dims)
+classInt::classIntervals(res_point$uncertainty, n = dims, style = "quantile")$brks
+
+tst <- res_point |>
+  st_drop_geometry() |>
+  as_tibble() |>
+  bi_class(x = susceptibility, y = uncertainty, style = "quantile", dim = dims) |>
+  mutate(
+    bc_s = cut(susceptibility, breaks = susc_brks, include.lowest = TRUE, dig.lab = 3),
+    bc_u = cut(uncertainty, breaks = classInt::classIntervals(
+      uncertainty,
+      n = dims, style = "quantile"
+    )$brks, include.lowest = TRUE, dig.lab = 3)
+  ) |>
+  mutate(across(starts_with("bc_"), as.integer)) |>
+  unite("bi_cl", bc_s:bc_u, sep = "-")
 
 # sf w/ poly
 res_poly <- res_point |>
