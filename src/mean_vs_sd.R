@@ -96,10 +96,10 @@ print(glue("{format(Sys.time())} -- creating hexbin plot"))
 brks <- 20^(0:4)
 p <- ggplot(res, aes(x = mean_susc, y = sd_susc)) +
   geom_hex() +
-  geom_line(data = regr$xyline, aes(x = x, y = y)) +
+  geom_line(data = regr$xyline, aes(x = x, y = y), linetype = "dashed") +
   xlab("mean") +
   ylab("standard deviation") +
-  scale_fill_viridis_c(name = "counts (log)", option = "inferno", breaks = brks, trans = "log") +
+  scale_fill_viridis_c(name = "counts (log)", option = "magma", breaks = brks, trans = "log") +
   theme_linedraw() +
   theme(
     text = element_text(
@@ -114,10 +114,10 @@ ggsave(glue("plt/mean-vs-sd_hex.png"), p, width = w, height = h, units = "mm", d
 print(glue("{format(Sys.time())} -- creating 2d bin plot"))
 p <- ggplot(res, aes(x = mean_susc, y = sd_susc)) +
   geom_bin2d(bins = 50) +
-  geom_line(data = regr$xyline, aes(x = x, y = y)) +
+  geom_line(data = regr$xyline, aes(x = x, y = y), linetype = "dashed") +
   xlab("mean") +
   ylab("standard deviation") +
-  scale_fill_viridis_c(name = "counts (log)", option = "inferno", breaks = brks, trans = "log") +
+  scale_fill_viridis_c(name = "counts (log)", option = "magma", breaks = brks, trans = "log") +
   theme_linedraw() +
   theme(
     text = element_text(
