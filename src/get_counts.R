@@ -29,13 +29,13 @@ res <- qs::qread("dat/interim/mod_obs.qs", nthreads = 16L) |>
       n = 3, style = "quantile"
     )$brks, include.lowest = TRUE, dig.lab = 3)
   ) |>
-  mutate(across(starts_with("bc_"), as.integer))
+  mutate(across(starts_with("bc_"), \(x) ordered(as.integer(x), levels = 1:3, labels = c("low", "medium", "high"))))
 
 res_agg <- res |>
   group_by(bc_s, bc_u) |>
   summarise(cnt = n(), .groups = "drop") |>
-  mutate(cnt_f = format(cnt, big.mark = ",", scientific = F)) |>
-  mutate(across(starts_with("bc_"), \(x) ordered(x, levels = 1:3, labels = c("low", "medium", "high"))))
+  mutate(cnt_f = format(cnt, big.mark = ",", scientific = F))
+
 
 p <- ggplot(res_agg, aes(x = bc_s, y = bc_u, fill = cnt)) +
   geom_tile(color = "white", linewidth = 2) +
