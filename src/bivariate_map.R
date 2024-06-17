@@ -75,7 +75,7 @@ custom_bi_class <- function(dat, brks, style = "quantile", dim = 3) {
   #' See `bi_class()` for details.
   #'
   #' @return Input object with new column `bi_class`.
-  res_point |>
+  dat |>
     bi_class(x = susceptibility, y = uncertainty, style = style, dim = dim) |>
     mutate(
       bc_s = cut(susceptibility, breaks = brks, include.lowest = TRUE, dig.lab = 3),
@@ -84,7 +84,7 @@ custom_bi_class <- function(dat, brks, style = "quantile", dim = 3) {
       )$brks, include.lowest = TRUE, dig.lab = 3)
     ) |>
     mutate(across(starts_with("bc_"), as.integer)) |>
-    unite("bi_class", bc_s:bc_u, sep = "-")
+    tidyr::unite("bi_class", bc_s:bc_u, sep = "-")
 }
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
