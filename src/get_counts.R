@@ -36,7 +36,7 @@ res_agg <- res |>
   summarise(cnt = n(), .groups = "drop") |>
   mutate(cnt_f = format(cnt, big.mark = ",", scientific = F))
 
-
+# heatmap
 p <- ggplot(res_agg, aes(x = bc_s, y = bc_u, fill = cnt)) +
   geom_tile(color = "white", linewidth = 2) +
   geom_label(aes(label = cnt_f), family = "Source Sans Pro", fill = "white", size = 10) +
@@ -54,3 +54,24 @@ p <- ggplot(res_agg, aes(x = bc_s, y = bc_u, fill = cnt)) +
     )
   )
 ggsave("plt/class_counts.png", p, width = w, height = h, units = "mm", dpi = 300)
+
+# mosaic plot w/ ggmosaic
+p <- ggplot(data = res) +
+  ggmosaic::geom_mosaic(aes(x = product(bc_u, bc_s))) +
+  xlab("mean (class)") +
+  ylab("standard deviation (class)") +
+  theme_linedraw() +
+  theme(panel.grid = element_blank()) +
+  coord_equal() +
+  theme(
+    text = element_text(
+      family = "Source Sans Pro",
+      colour = "black",
+      size = 40
+    )
+  )
+ggsave("plt/class_counts_mosaic.png", p, width = w, height = h, units = "mm", dpi = 300)
+
+# alternatives w/ ggplot2:
+# - autoplot(yardstick::conf_mat, type = "mosaic")
+# - productplots::prodplot()
