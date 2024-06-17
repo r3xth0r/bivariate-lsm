@@ -5,6 +5,7 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 suppressPackageStartupMessages({
+  library("MASS")
   library("ggplot2")
   library("hexbin")
   library("scattermore")
@@ -39,14 +40,20 @@ tmp <- res |>
   dplyr::select(s = sd_susc, m = mean_susc) |>
   dplyr::mutate(m2 = m^2)
 
-fit_quadratic_regression <- function(tbl, intercept = FALSE) {
+fit_quadratic_regression <- function(tbl, robust = FALSE, intercept = FALSE) {
+  print(glue("{format(Sys.time())} » Fitting quadratic regression"))
   mat <- as.matrix(tbl)
   y <- mat[, "s"]
   X <- mat[, c("m", "m2")]
   if (intercept) {
     X <- cbind(1, X)
   }
-  mod <- lm.fit(x = X, y = y)
+  if (robust) {
+    print(glue("{format(Sys.time())} » Computing robust regression model. This may take some time."))
+    mod <- rlm(x = X, y = y, psi = psi.bisquare)
+  } else {
+    mod <- lm.fit(x = X, y = y)
+  }
   yhat <- mod$fitted.values
   ybar <- mean(y)
   MSS <- sum(yhat^2)
@@ -64,15 +71,17 @@ fit_quadratic_regression <- function(tbl, intercept = FALSE) {
   x <- seq(0, 1, length = 1000)
   y <- coefs["m"] * x + coefs["m2"] * x^2
   out <- list(
+    mod = mod,
     coefficients = coefs,
     xyline = tibble::tibble(x, y),
     R2 = R2,
     rho = rho
   )
+  print(glue("{format(Sys.time())} » Done"))
   return(out)
 }
 
-regr <- fit_quadratic_regression(tmp, intercept = FALSE)
+regr <- fit_quadratic_regression(tmp, robust = TRUE, intercept = FALSE)
 
 # scatterplot (slow despite using scattermore) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 print(glue("{format(Sys.time())} -- creating scatterplot"))
