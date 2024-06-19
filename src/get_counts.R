@@ -53,8 +53,8 @@ yticks <- res_agg |>
 p <- ggplot(res_agg, aes(x = bc_s, y = bc_u, fill = cnt)) +
   geom_tile(color = "white", linewidth = 2) +
   geom_label(aes(label = cnt_f), family = "Source Sans Pro", fill = "white", size = 10) +
-  xlab("mean (class)") +
-  ylab("standard deviation (class)") +
+  xlab("susceptibility (class)") +
+  ylab("uncertainty (class)") +
   scale_fill_viridis_c(name = "count", option = "magma", breaks = seq(1.0e+06, 1.7e+07, 4e+06), limits = c(1.0e+06, 1.7e+07)) +
   theme_linedraw() +
   theme(panel.grid = element_blank()) +
@@ -66,15 +66,15 @@ p <- ggplot(res_agg, aes(x = bc_s, y = bc_u, fill = cnt)) +
       size = 40
     )
   )
-ggsave("plt/class_counts.png", p, width = w, height = h, units = "mm", dpi = 300)
+ggsave("plt/class_counts_heatmap.png", p, width = w, height = h, units = "mm", dpi = 300)
 
 # mosaic plot
 p <- ggplot(res_agg, aes(x = bc_s, y = prop_x, width = bc_s_count, group = bc_u, fill = cnt)) +
   geom_bar(stat = "identity", position = "stack", colour = "white", linewidth = 2, show.legend = FALSE) +
   geom_label(aes(label = scales::percent(prop_tot)), position = position_stack(vjust = 0.5), fill = "white", size = 7) +
   facet_grid(~bc_s, scales = "free_x", space = "free_x") +
-  xlab("mean (class)") +
-  scale_y_continuous(name = "standard deviation (class)", breaks = yticks, labels = c("low", "medium", "high")) +
+  xlab("susceptibility (class)") +
+  scale_y_continuous(name = "uncertainty (class)", breaks = yticks, labels = c("low", "medium", "high")) +
   scale_fill_viridis_c(option = "magma") +
   theme_linedraw() +
   theme(
@@ -88,7 +88,7 @@ p <- ggplot(res_agg, aes(x = bc_s, y = prop_x, width = bc_s_count, group = bc_u,
       size = 40
     )
   )
-ggsave("plt/class_counts_mosaic.png", p, width = w, height = h, units = "mm", dpi = 300)
+ggsave("plt/class_counts_mosaic.png", p, width = w, height = h + 20, units = "mm", dpi = 300)
 
 # alternatives w/ ggplot2:
 # - autoplot(yardstick::conf_mat, type = "mosaic")
