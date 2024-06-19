@@ -7,6 +7,7 @@
 suppressPackageStartupMessages({
   library("dplyr")
   library("ggplot2")
+  library("ggmosaic")
   library("biscale")
   library("showtext")
 })
@@ -57,7 +58,8 @@ ggsave("plt/class_counts.png", p, width = w, height = h, units = "mm", dpi = 300
 
 # mosaic plot w/ ggmosaic
 p <- ggplot(data = res) +
-  ggmosaic::geom_mosaic(aes(x = product(bc_u, bc_s))) +
+  geom_mosaic(aes(x = product(bc_u, bc_s))) +
+  geom_mosaic_text(aes(x = product(bc_u, bc_s), label = after_stat(.wt)), as.label = TRUE, size = 10) +
   xlab("mean (class)") +
   ylab("standard deviation (class)") +
   theme_linedraw() +
