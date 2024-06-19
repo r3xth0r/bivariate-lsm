@@ -104,8 +104,9 @@ ggsave(filename = "plt/biscale_pals.png", plot = p_biscale, width = 133, height 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 aoi <- read_sf("dat/raw/aoi/aoi_small.geojson")
-mask <- read_sf("dat/raw/lakes/lakes_aoi_l.geojson") |>
+lake_mask <- read_sf("dat/raw/lakes/lakes_aoi_l.geojson") |>
   st_intersection(aoi)
+elev_mask <- read_sf("dat/interim/high_elev_mask.geojson")
 
 susc_brks <- c(0, 0.4481, 0.6096, 1)
 
@@ -133,7 +134,8 @@ res_point <- res_point |>
 # Alternative 1: plot points with geom_raster
 map_raster <- ggplot() +
   geom_raster(data = res_point, mapping = aes(x = x, y = y, fill = bi_class), show.legend = FALSE) +
-  geom_sf(data = mask, fill = "white", color = "white") +
+  geom_sf(data = lake_mask, fill = "white", color = "white") +
+  geom_sf(data = elev_mask, fill = "white", color = "white", alpha = 0.8) +
   bi_scale_fill(pal = pal, dim = dims) +
   theme_linedraw() +
   coord_sf(crs = 3416, expand = 0) +
