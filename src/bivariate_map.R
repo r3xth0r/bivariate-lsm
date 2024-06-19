@@ -134,7 +134,7 @@ map_raster <- ggplot() +
   coord_sf(crs = 3416, expand = 0) +
   xlab("") +
   ylab("") +
-  theme(text = element_text(size = 30))
+  theme(text = element_text(family = "Source Sans Pro", size = 30))
 
 # map_raster <- map_raster +
 #   annotation_scale(
@@ -168,7 +168,7 @@ legend <- bi_legend(
   ylab = "uncertainty",
   size = 8
 ) +
-  theme(text = element_text(size = 20))
+  theme(text = element_text(family = "Source Sans Pro", size = 20))
 
 p <- map_raster + legend + plot_layout(widths = c(7, 1))
 
