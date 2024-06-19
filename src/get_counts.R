@@ -7,7 +7,6 @@
 suppressPackageStartupMessages({
   library("dplyr")
   library("ggplot2")
-  library("ggmosaic")
   library("biscale")
   library("showtext")
 })
@@ -34,8 +33,21 @@ res <- qs::qread("dat/interim/mod_obs.qs", nthreads = 16L) |>
 
 res_agg <- res |>
   group_by(bc_s, bc_u) |>
-  summarise(cnt = n(), .groups = "drop") |>
-  mutate(cnt_f = format(cnt, big.mark = ",", scientific = F))
+  summarise(cnt = n()) |>
+  mutate(
+    bc_u = forcats::fct_rev(bc_u),
+    cnt_f = format(cnt, big.mark = ",", scientific = F),
+    bc_s_count = sum(cnt),
+    prop_x = cnt / sum(cnt)
+  ) |>
+  ungroup() |>
+  mutate(prop_tot = cnt / sum(cnt))
+
+yticks <- res_agg |>
+  filter(bc_s == "low") |>
+  mutate(cs = cumsum(prop_x)) |>
+  mutate(yt = tidyr::replace_na(lag(cs), 0) + prop_x / 2) |>
+  pull(yt)
 
 # heatmap
 p <- ggplot(res_agg, aes(x = bc_s, y = bc_u, fill = cnt)) +
@@ -56,16 +68,20 @@ p <- ggplot(res_agg, aes(x = bc_s, y = bc_u, fill = cnt)) +
   )
 ggsave("plt/class_counts.png", p, width = w, height = h, units = "mm", dpi = 300)
 
-# mosaic plot w/ ggmosaic
-p <- ggplot(data = res) +
-  geom_mosaic(aes(x = product(bc_u, bc_s))) +
-  geom_mosaic_text(aes(x = product(bc_u, bc_s), label = after_stat(.wt)), as.label = TRUE, size = 10) +
+# mosaic plot
+p <- ggplot(res_agg, aes(x = bc_s, y = prop_x, width = bc_s_count, group = bc_u, fill = cnt)) +
+  geom_bar(stat = "identity", position = "stack", colour = "white", linewidth = 2, show.legend = FALSE) +
+  geom_label(aes(label = scales::percent(prop_tot)), position = position_stack(vjust = 0.5), fill = "white", size = 7) +
+  facet_grid(~bc_s, scales = "free_x", space = "free_x") +
   xlab("mean (class)") +
-  ylab("standard deviation (class)") +
+  scale_y_continuous(name = "standard deviation (class)", breaks = yticks, labels = c("low", "medium", "high")) +
+  scale_fill_viridis_c(option = "magma") +
   theme_linedraw() +
-  theme(panel.grid = element_blank()) +
-  coord_equal() +
   theme(
+    panel.border = element_blank(),
+    panel.grid = element_blank(),
+    strip.background = element_blank(),
+    strip.text = element_blank(),
     text = element_text(
       family = "Source Sans Pro",
       colour = "black",
@@ -77,3 +93,4 @@ ggsave("plt/class_counts_mosaic.png", p, width = w, height = h, units = "mm", dp
 # alternatives w/ ggplot2:
 # - autoplot(yardstick::conf_mat, type = "mosaic")
 # - productplots::prodplot()
+# - ggmosaic::geom_mosaic()
