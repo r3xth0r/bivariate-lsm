@@ -134,6 +134,15 @@ res_point <- res_point |>
   sfc_as_cols(drop_geometry = TRUE) |>
   as_tibble()
 
+# full data
+# tic()
+# res_full <- qs::qread("dat/interim/mod_obs.qs", nthreads = 16L) |>
+#   rename(susceptibility = mean_susc, uncertainty = sd_susc) |>
+#   select(-slide) |>
+#   custom_bi_class(brks = susc_brks)
+# toc()
+# 45 seconds elapsed
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 # plotting
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
