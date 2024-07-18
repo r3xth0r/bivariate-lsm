@@ -24,75 +24,8 @@ showtext_auto()
 # helper functions
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-sfc_as_cols <- function(x, geometry, names = c("x", "y"), drop_geometry = FALSE) {
-  #' Add geometry to dataframe as separate numeric columns.
-  #'
-  #' @description Extracts the geometry of an sf-object with geometry type POINT
-  #' and adds it as dedicated columns. The geometry column can be dropped optionally.
-  #'
-  #' @param x sf-object to extract the geometry from.
-  #' @param geometry character. Name of the geometry column. The geometry is
-  #' guessed from the sf object using sf::st_geometry() if not provided.
-  #' @param names character. Names of the coordinates, defaults to `c("x", "y")`.
-  #' @param drop_geometry logical. Keep (default) or drop geometry column after extraction.
-  #'
-  #' @usage sfc_as_cols(x)
-  #' @return Input object with coordinates added as numeric columns.
-  if (missing(geometry)) {
-    geometry <- sf::st_geometry(x)
-  } else {
-    geometry <- rlang::eval_tidy(enquo(geometry), x)
-  }
-  stopifnot(inherits(x, "sf") && inherits(geometry, "sfc_POINT"))
-  ret <- sf::st_coordinates(geometry)
-  ret <- tibble::as_tibble(ret)
-  stopifnot(length(names) == ncol(ret))
-  x <- x[, !names(x) %in% names]
-  ret <- setNames(ret, names)
-  out <- dplyr::bind_cols(x, ret)
-  if (drop_geometry) {
-    out <- st_drop_geometry(out)
-  }
-  out
-}
-
-custom_bi_class <- function(dat, brks = NULL, style = "quantile", dim = 3) {
-  #' Create custom classes for bivariate maps
-  #'
-  #' @description Computes custom classes for bivariate maps based using
-  #' user-defined breaks for the susceptibility and styles supported by biscale
-  #' for the uncertainty.
-  #'
-  # This is handled by biscale:::bi_var_cut() which effectively uses
-  # classInt::classIntervals()$brks to derive the breaks which are passed on to
-  # base::cut().
-  #'
-  #' @param dat data.frame-like object to add a new column `bi_class` to.
-  #' @param brks numeric vector specifying class splits for the mean.
-  #' Defaults to breaks for the defined `style` if not supplied.
-  #' @param style A string identifying the style used to calculate breaks.
-  #' See `bi_class()` for details.
-  #' @param dim integer denoting the dimensions of the palette.
-  #' See `bi_class()` for details.
-  #'
-  #' @return Input object with new column `bi_class`.
-  if (is.null(brks)) {
-    cat(paste0("Using breaks of type `", style, "`\n"))
-    dat |>
-      bi_class(x = susceptibility, y = uncertainty, style = style, dim = dim)
-  } else {
-    cat(paste0("Using custom breaks for mean and breaks of type `", style, "` for sd\n"))
-    dat |>
-      mutate(
-        bc_s = cut(susceptibility, breaks = brks, include.lowest = TRUE, dig.lab = 3),
-        bc_u = cut(uncertainty, breaks = classInt::classIntervals(
-          var = uncertainty, n = dim, style = style
-        )$brks, include.lowest = TRUE, dig.lab = 3)
-      ) |>
-      mutate(across(starts_with("bc_"), as.integer)) |>
-      tidyr::unite("bi_class", bc_s:bc_u, sep = "-")
-  }
-}
+source("R/sfc_as_cols.R")
+source("R/custom_bi_class.R")
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 # explore color palettes
