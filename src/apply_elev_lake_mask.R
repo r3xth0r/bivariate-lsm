@@ -13,7 +13,8 @@ suppressPackageStartupMessages({
 
 source("R/sfc_as_cols.R")
 
-lakes <- read_sf("dat/interim/lakes_aoi_large.geojson")
+lakes <- read_sf("dat/interim/lakes_aoi_large.geojson") |>
+  select(fid, geometry)
 
 elev <- read_stars("dat/raw/dtm/dtm_carinthia.tif") |>
   st_as_sf(as_points = TRUE) |>
@@ -29,9 +30,12 @@ qread("dat/interim/mod_obs.qs", nthreads = 16L) |>
   filter(!elev) |>
   select(-elev) |>
   st_as_sf(coords = c("x", "y"), crs = st_crs(3416)) |>
-  st_filter(lakes, .predicate = st_disjoint) |>
+  st_join(lakes, join = st_intersects) |>
   sfc_as_cols(drop_geometry = TRUE) |>
+  filter(is.na(fid)) |>
+  select(-fid) |>
   qsave("dat/interim/mod_obs_masked.qs", nthreads = 16L)
 
 # before masking:       n = 57,519,784 | 100.00 %
-# after masking:        n = 46,803,092 |  81.37 %
+# after elev masking:   n = 46,803,092 |  81.37 %
+# after lake masking:   n = 46,760,232 |  81.29 %
