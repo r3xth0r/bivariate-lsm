@@ -20,6 +20,9 @@ h <- 120
 
 susc_brks <- c(0, 0.4481, 0.6096, 1)
 
+bicols <- biscale:::bi_pal_pull("DkViolet", dim = 3, flip_axes = FALSE, rotate_pal = FALSE) |>
+  tibble::enframe(name = "class", value = "hex")
+
 res <- qs::qread("dat/interim/mod_obs.qs", nthreads = 16L) |>
   rename(susceptibility = mean_susc, uncertainty = sd_susc) |>
   mutate(
@@ -41,7 +44,8 @@ res_agg <- res |>
     prop_x = cnt / sum(cnt)
   ) |>
   ungroup() |>
-  mutate(prop_tot = cnt / sum(cnt))
+  mutate(prop_tot = cnt / sum(cnt)) |>
+  bind_cols(bicols)
 
 yticks <- res_agg |>
   filter(bc_s == "low") |>
@@ -69,13 +73,13 @@ p <- ggplot(res_agg, aes(x = bc_s, y = bc_u, fill = cnt)) +
 ggsave("plt/class_counts_heatmap.png", p, width = w, height = h, units = "mm", dpi = 300)
 
 # mosaic plot
-p <- ggplot(res_agg, aes(x = bc_s, y = prop_x, width = bc_s_count, group = bc_u, fill = cnt)) +
+p <- ggplot(res_agg, aes(x = bc_s, y = prop_x, width = bc_s_count, group = bc_u, fill = class)) +
   geom_bar(stat = "identity", position = "stack", colour = "white", linewidth = 2, show.legend = FALSE) +
   geom_label(aes(label = scales::percent(prop_tot)), position = position_stack(vjust = 0.5), fill = "white", size = 7) +
   facet_grid(~bc_s, scales = "free_x", space = "free_x") +
   xlab("susceptibility (class)") +
   scale_y_continuous(name = "uncertainty (class)", breaks = yticks, labels = c("low", "medium", "high")) +
-  scale_fill_viridis_c(option = "magma") +
+  scale_fill_manual(values = bicols$hex) +
   theme_linedraw() +
   theme(
     panel.border = element_blank(),
