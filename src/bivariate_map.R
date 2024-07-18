@@ -86,7 +86,7 @@ custom_bi_class <- function(dat, brks = NULL, style = "quantile", dim = 3) {
       mutate(
         bc_s = cut(susceptibility, breaks = brks, include.lowest = TRUE, dig.lab = 3),
         bc_u = cut(uncertainty, breaks = classInt::classIntervals(
-          uncertainty, n = dim, style = style
+          var = uncertainty, n = dim, style = style
         )$brks, include.lowest = TRUE, dig.lab = 3)
       ) |>
       mutate(across(starts_with("bc_"), as.integer)) |>
@@ -111,7 +111,7 @@ ggsave(filename = "plt/biscale_pals.png", plot = p_biscale, width = 133, height 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 aoi <- read_sf("dat/raw/aoi/aoi_small.geojson")
-lake_mask <- read_sf("dat/raw/lakes/lakes_aoi_l.geojson") |>
+lake_mask <- read_sf("dat/interim/lakes/lakes_aoi_large.geojson") |>
   st_intersection(aoi)
 elev_mask <- read_sf("dat/interim/high_elev_mask.geojson")
 
