@@ -58,7 +58,7 @@ p <- ggplot(res_agg, aes(x = bc_s, y = bc_u, fill = cnt)) +
   geom_label(aes(label = cnt_f), family = "Source Sans Pro", fill = "white", size = 10) +
   xlab("susceptibility (class)") +
   ylab("uncertainty (class)") +
-  scale_fill_viridis_c(name = "count", option = "magma", breaks = seq(1.0e+06, 1.7e+07, 4e+06), limits = c(1.0e+06, 1.7e+07)) +
+  scale_fill_viridis_c(name = "count", option = "magma", breaks = seq(1.0e+06, 1.7e+07, 4e+06), limits = c(4e+05, 1.5e+07)) +
   theme_linedraw() +
   theme(panel.grid = element_blank()) +
   coord_equal() +

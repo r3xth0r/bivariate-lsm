@@ -17,8 +17,8 @@ font_add("Source Sans Pro", "~/.fonts/source-sans-pro/SourceSansPro-Regular.ttf"
 showtext_auto()
 
 ncores <- 16L
-w <- 150
-h <- 120
+w <- 140
+h <- 100
 
 print(glue("{format(Sys.time())} -- loading data"))
 res <- qs::qread("dat/interim/mod_obs_masked.qs", nthreads = ncores)
@@ -103,7 +103,7 @@ p <- ggplot(res, aes(x = susceptibility, y = uncertainty)) +
     text = element_text(
       family = "Source Sans Pro",
       colour = "black",
-      size = 20
+      size = 30
     )
   )
 ggsave(glue("plt/mean-vs-sd_hex.png"), p, width = w, height = h, units = "mm", dpi = 300)
@@ -121,7 +121,7 @@ p <- ggplot(res, aes(x = susceptibility, y = uncertainty)) +
     text = element_text(
       family = "Source Sans Pro",
       colour = "black",
-      size = 20
+      size = 30
     )
   )
 ggsave(glue("plt/mean-vs-sd_2d-bin.png"), p, width = w, height = h, units = "mm", dpi = 300)
