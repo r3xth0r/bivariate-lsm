@@ -23,8 +23,7 @@ susc_brks <- c(0, 0.4481, 0.6096, 1)
 bicols <- biscale:::bi_pal_pull("DkViolet", dim = 3, flip_axes = FALSE, rotate_pal = FALSE) |>
   tibble::enframe(name = "class", value = "hex")
 
-res <- qs::qread("dat/interim/mod_obs.qs", nthreads = 16L) |>
-  rename(susceptibility = mean_susc, uncertainty = sd_susc) |>
+res <- qs::qread("dat/interim/mod_obs_masked.qs", nthreads = 16L) |>
   mutate(
     bc_s = cut(susceptibility, breaks = susc_brks, include.lowest = TRUE, dig.lab = 3),
     bc_u = cut(uncertainty, breaks = classInt::classIntervals(

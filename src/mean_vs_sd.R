@@ -21,23 +21,12 @@ w <- 150
 h <- 120
 
 print(glue("{format(Sys.time())} -- loading data"))
-res <- qs::qread("dat/interim/mod_obs.qs", nthreads = ncores)
-
-# > head(res)
-# # A tibble: 6 × 5
-#   slide      x      y mean_susc sd_susc
-#   <lgl>  <int>  <int>     <dbl>   <dbl>
-# 1 FALSE 352810 358480     0.425  0.0453
-# 2 FALSE 352620 358470     0.281  0.0181
-# 3 FALSE 352630 358470     0.357  0.0400
-# 4 FALSE 352640 358470     0.335  0.0408
-# 5 FALSE 352650 358470     0.340  0.0399
-# 6 FALSE 352660 358470     0.343  0.0446
+res <- qs::qread("dat/interim/mod_obs_masked.qs", nthreads = ncores)
 
 # quadratic regression ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 tmp <- res |>
-  dplyr::select(s = sd_susc, m = mean_susc) |>
+  dplyr::select(s = uncertainty, m = susceptibility) |>
   dplyr::mutate(m2 = m^2)
 
 fit_quadratic_regression <- function(tbl, robust = FALSE, intercept = FALSE) {
@@ -85,7 +74,7 @@ regr <- fit_quadratic_regression(tmp, robust = TRUE, intercept = FALSE)
 
 # scatterplot (slow despite using scattermore) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 print(glue("{format(Sys.time())} -- creating scatterplot"))
-p <- ggplot(res, aes(x = mean_susc, y = sd_susc)) +
+p <- ggplot(res, aes(x = susceptibility, y = uncertainty)) +
   geom_scattermore(alpha = 0.1) +
   geom_line(data = regr$xyline, aes(x = x, y = y), color = "white") +
   xlab("mean") +
@@ -103,7 +92,7 @@ ggsave("plt/mean-vs-sd_scatter.png", p, width = w, height = h, units = "mm")
 # hexbin ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 print(glue("{format(Sys.time())} -- creating hexbin plot"))
 brks <- 20^(0:4)
-p <- ggplot(res, aes(x = mean_susc, y = sd_susc)) +
+p <- ggplot(res, aes(x = susceptibility, y = uncertainty)) +
   geom_hex() +
   geom_line(data = regr$xyline, aes(x = x, y = y), linetype = "dashed") +
   xlab("mean") +
@@ -121,7 +110,7 @@ ggsave(glue("plt/mean-vs-sd_hex.png"), p, width = w, height = h, units = "mm", d
 
 # 2d bins ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 print(glue("{format(Sys.time())} -- creating 2d bin plot"))
-p <- ggplot(res, aes(x = mean_susc, y = sd_susc)) +
+p <- ggplot(res, aes(x = susceptibility, y = uncertainty)) +
   geom_bin2d(bins = 50) +
   geom_line(data = regr$xyline, aes(x = x, y = y), linetype = "dashed") +
   xlab("mean") +
