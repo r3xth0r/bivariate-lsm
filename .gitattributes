@@ -1,3 +1,4 @@
 gis/bivariate.tif filter=lfs diff=lfs merge=lfs -text
 dat/processed/susceptibility.tif filter=lfs diff=lfs merge=lfs -text
 dat/raw/aoi/aoi_carinthia.gpkg filter=lfs diff=lfs merge=lfs -text
+dat/interim/dtm.tif filter=lfs diff=lfs merge=lfs -text
