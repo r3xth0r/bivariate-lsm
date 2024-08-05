@@ -18,7 +18,7 @@ echo "$(date +"%Y-%m-%d %H:%M:%S") » Clipping DTM"
 gdalwarp -s_srs EPSG:3416 -t_srs EPSG:3416 -of GTiff \
     -cutline dat/raw/aoi/aoi_${aoi_size}.geojson -crop_to_cutline \
     -dstnodata -1.0 \
-    dat/raw/dtm/dtm_at_10m_3416.tif \
+    dat/raw/dtm/dtm_carinthia.tif \
     dat/interim/dtm.tif
     
 echo "$(date +"%Y-%m-%d %H:%M:%S") » DONE"
