@@ -23,3 +23,7 @@ The general repo structure is as follows:
 - `doc`: documentation
 - `plt`: plots / figures
 - `src`: development (scripts)
+
+## Data
+
+This repository contains sample data for plotting. If you have [Git LFS](https://git-lfs.com/) installed, you can simply clone the full repo using `git clone`. If not, download and install the Git LFS extension and update the cloned repository with `git lfs fetch --all` and `git lfs pull`.
