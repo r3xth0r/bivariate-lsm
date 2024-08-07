@@ -8,11 +8,11 @@
 </p>
 
 This repository supplements the manuscript by
-Matthias Schlögl<sup>[![](https://info.orcid.org/wp-content/uploads/2020/01/orcid-logo-20-px.png)](https://orcid.org/0000-0002-4357-523X)</sup>,
-Anita Graser<sup>[![](https://info.orcid.org/wp-content/uploads/2020/01/orcid-logo-20-px.png)](https://orcid.org/0000-0001-5361-2885)</sup>,
-Stefan Steger<sup>[![](https://info.orcid.org/wp-content/uploads/2020/01/orcid-logo-20-px.png)](https://orcid.org/0000-0003-0886-5191)</sup>,
-Jasmin Lampert<sup>[![](https://info.orcid.org/wp-content/uploads/2020/01/orcid-logo-20-px.png)](https://orcid.org/0000-0002-0414-4525)</sup> and
-Raphael Spiekermann<sup>[![](https://info.orcid.org/wp-content/uploads/2020/01/orcid-logo-20-px.png)](https://orcid.org/0000-0002-4772-9750)</sup>
+Matthias Schlögl<sup>[![](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0002-4357-523X)</sup>,
+Anita Graser<sup>[![](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0001-5361-2885)</sup>,
+Stefan Steger<sup>[![](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0003-0886-5191)</sup>,
+Jasmin Lampert<sup>[![](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0002-0414-4525)</sup> and
+Raphael Spiekermann<sup>[![](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0002-4772-9750)</sup>
 (2024):
 **Brief communication: Visualizing uncertainties in landslide susceptibility modeling using bivariate mapping**.
 *Journal*, Issue(No), pp-pp. [doi:](https://doi.org/)
