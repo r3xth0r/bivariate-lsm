@@ -9,10 +9,12 @@
 
 This repository supplements the manuscript by
 Matthias Schlögl <sup>[![](https://info.orcid.org/wp-content/uploads/2020/12/orcid_16x16.gif)](https://orcid.org/0000-0002-4357-523X)</sup>,
-Anita Graser <sup>[![](https://info.orcid.org/wp-content/uploads/2020/12/orcid_16x16.gif)](https://orcid.org/0000-0001-5361-2885)</sup> and
-Jasmin Lampert <sup>[![](https://info.orcid.org/wp-content/uploads/2020/12/orcid_16x16.gif)](https://orcid.org/0000-0002-0414-4525)</sup>
+Anita Graser <sup>[![](https://info.orcid.org/wp-content/uploads/2020/12/orcid_16x16.gif)](https://orcid.org/0000-0001-5361-2885)</sup>,
+Stefan Steger <sup>[![](https://info.orcid.org/wp-content/uploads/2020/12/orcid_16x16.gif)](https://orcid.org/0000-0003-0886-5191)</sup>,
+Jasmin Lampert <sup>[![](https://info.orcid.org/wp-content/uploads/2020/12/orcid_16x16.gif)](https://orcid.org/0000-0002-0414-4525)</sup> and
+Raphael Spiekermann <sup>[![](https://info.orcid.org/wp-content/uploads/2020/12/orcid_16x16.gif)](https://orcid.org/0000-0002-4772-9750)</sup>
 (2024):
-**Communicating uncertainties in landslide susceptibility modeling using bivariate mapping**.
+**Brief communication: Visualizing uncertainties in landslide susceptibility modeling using bivariate mapping**.
 *Journal*, Issue(No), pp-pp. [doi:](https://doi.org/)
 
 ## Repo structure 
