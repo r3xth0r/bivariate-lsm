@@ -49,7 +49,7 @@ plot_3d(
   # elevation
   heightmap = dtm,
   # ratio between x/y and z
-  zscale = 1.5,
+  zscale = 5,
   # shape of the base
   baseshape = "rectangle",
   # render only surface
@@ -59,13 +59,16 @@ plot_3d(
   # render water
   water = FALSE,
   # rotation angle
-  theta = 45,
+  theta = 70,
   # azimuth angle
-  phi = 60,
+  phi = 40,
   # field of view (0 = isometric)
   fov = 0,
   # camera magnification
   zoom = 1,
+  # window size
+  windowsize = unname(dim(dtm)),
+  # background
   background = "black"
 )
 
