@@ -72,11 +72,11 @@ plot_3d(
   background = "black"
 )
 
-# open interactive widget
-rgl::rglwidget()
+# open interactive widget on rstudio-server
+# rgl::rglwidget()
 
 # export html
-htmlwidgets::saveWidget(rgl::rglwidget(), "plt/rayshader.html")
+# htmlwidgets::saveWidget(rgl::rglwidget(), "plt/rayshader.html")
 
 # export static snapshot
 render_snapshot(filename = "plt/rayshader.png", software_render = TRUE, width = 1920, height = 1080)
