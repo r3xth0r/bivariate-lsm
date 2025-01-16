@@ -32,12 +32,11 @@ source("R/custom_bi_class.R")
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 dims <- 3
-pals <- c("Bluegill", "BlueGold", "BlueOr", "BlueYl", "Brown", "DkBlue", "DkCyan", "DkViolet", "GrPink", "PinkGrn", "PurpleGrn", "PurpleOr")
-pal <- pals[8]
-p_pals <- lapply(pals, bi_pal, dim = dims)
-p_biscale <- wrap_plots(p_pals)
-ggsave(filename = "plt/biscale_pals.png", plot = p_biscale, width = 133, height = 100, units = "mm")
-# the most suitable palettes seem to be c("Brown", "PurpleOr", "GrPink", "DkViolet")
+allpals <- c("Bluegill", "BlueGold", "BlueOr", "BlueYl", "Brown", "DkBlue", "DkCyan", "DkViolet", "GrPink", "PinkGrn", "PurpleGrn", "PurpleOr")
+pal <- "DkViolet"
+p_pals <- lapply(allpals, \(x) bi_pal(x, dim = dims) + ggtitle(x))
+p_biscale <- wrap_plots(p_pals, tag_level = "keep")
+ggsave(filename = "plt/biscale_pals.png", plot = p_biscale, width = 200, height = 150, units = "mm")
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 # data preparation
