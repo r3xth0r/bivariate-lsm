@@ -79,8 +79,7 @@ res_point <- res_point |>
 # plotting
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-plot_map <- function(dat, pal){
-  
+plot_map <- function(dat, pal, sav = TRUE, ret = TRUE) {
   map_raster <- ggplot() +
     geom_raster(data = dat, mapping = aes(x = x, y = y, fill = bi_class), show.legend = FALSE) +
     geom_sf(data = lake_mask, fill = "white", color = "white") +
@@ -92,16 +91,16 @@ plot_map <- function(dat, pal){
     ylab("") +
     theme(text = element_text(family = "Source Sans Pro", size = 30))
 
-# map_raster <- map_raster +
-#   annotation_scale(
-#     location = "bl",
-#   ) +
-#   annotation_north_arrow(
-#     location = "tr",
-#     pad_x = unit(0.1, "in"),
-#     pad_y = unit(0.1, "in"),
-#     style = north_arrow_fancy_orienteering
-#   )
+  # map_raster <- map_raster +
+  #   annotation_scale(
+  #     location = "bl",
+  #   ) +
+  #   annotation_north_arrow(
+  #     location = "tr",
+  #     pad_x = unit(0.1, "in"),
+  #     pad_y = unit(0.1, "in"),
+  #     style = north_arrow_fancy_orienteering
+  #   )
 
   legend <- bi_legend(
     pal = pal,
@@ -111,14 +110,21 @@ plot_map <- function(dat, pal){
     size = 8
   ) +
     theme(text = element_text(family = "Source Sans Pro", size = 20))
-  
+
   p <- map_raster + legend + plot_layout(widths = c(7, 1))
-  
-  ggsave(filename = glue("plt/bivariate_map_R_{pal}.png"), plot = p, width = 220, height = 100, units = "mm")
-  
+
+  if (sav) {
+    ggsave(filename = glue("plt/bivariate_map_R_{pal}.png"), plot = p, width = 220, height = 100, units = "mm")
+  }
+
+  if (ret) {
+    p
+  }
 }
 
-walk(selpals, plot_map, dat = res_point, .progress = TRUE)
+res <- map(selpals, plot_map, dat = res_point, .progress = TRUE)
+p_maps <- wrap_plots(res, ncol = 2)
+ggsave(filename = "plt/biscale_maps_showcase.png", plot = p_maps, width = 440, height = 200, units = "mm")
 
 # Alternative 2: plot polygons with geom_sf()
 # CAVE: this is substantially slower
