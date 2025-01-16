@@ -9,16 +9,15 @@ suppressPackageStartupMessages({
   library("stars")
   library("dplyr")
   library("tidyr")
+  library("purrr")
   library("ggplot2")
   library("ggspatial")
   library("patchwork")
   library("biscale")
   library("showtext")
   library("tictoc")
+  library("glue")
 })
-
-font_add("Source Sans Pro", "~/.fonts/source-sans-pro/SourceSansPro-Regular.ttf")
-showtext_auto()
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 # helper functions
@@ -33,6 +32,7 @@ source("R/custom_bi_class.R")
 
 dims <- 3
 allpals <- c("Bluegill", "BlueGold", "BlueOr", "BlueYl", "Brown", "DkBlue", "DkCyan", "DkViolet", "GrPink", "PinkGrn", "PurpleGrn", "PurpleOr")
+selpals <- c("BlueGold", "BlueOr", "DkBlue", "DkViolet", "GrPink", "PurpleOr")
 pal <- "DkViolet"
 p_pals <- lapply(allpals, \(x) bi_pal(x, dim = dims) + ggtitle(x))
 p_biscale <- wrap_plots(p_pals, tag_level = "keep")
@@ -79,17 +79,18 @@ res_point <- res_point |>
 # plotting
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-# Alternative 1: plot points with geom_raster
-map_raster <- ggplot() +
-  geom_raster(data = res_point, mapping = aes(x = x, y = y, fill = bi_class), show.legend = FALSE) +
-  geom_sf(data = lake_mask, fill = "white", color = "white") +
-  geom_sf(data = elev_mask, fill = "white", color = "white", alpha = 0.8) +
-  bi_scale_fill(pal = pal, dim = dims) +
-  theme_linedraw() +
-  coord_sf(crs = 3416, expand = 0) +
-  xlab("") +
-  ylab("") +
-  theme(text = element_text(family = "Source Sans Pro", size = 30))
+plot_map <- function(dat, pal){
+  
+  map_raster <- ggplot() +
+    geom_raster(data = dat, mapping = aes(x = x, y = y, fill = bi_class), show.legend = FALSE) +
+    geom_sf(data = lake_mask, fill = "white", color = "white") +
+    geom_sf(data = elev_mask, fill = "white", color = "white", alpha = 0.8) +
+    bi_scale_fill(pal = pal, dim = dims) +
+    theme_linedraw() +
+    coord_sf(crs = 3416, expand = 0) +
+    xlab("") +
+    ylab("") +
+    theme(text = element_text(family = "Source Sans Pro", size = 30))
 
 # map_raster <- map_raster +
 #   annotation_scale(
@@ -102,9 +103,22 @@ map_raster <- ggplot() +
 #     style = north_arrow_fancy_orienteering
 #   )
 
-tic()
-map_raster
-toc()
+  legend <- bi_legend(
+    pal = pal,
+    dim = dims,
+    xlab = "susceptibility",
+    ylab = "uncertainty",
+    size = 8
+  ) +
+    theme(text = element_text(family = "Source Sans Pro", size = 20))
+  
+  p <- map_raster + legend + plot_layout(widths = c(7, 1))
+  
+  ggsave(filename = glue("plt/bivariate_map_R_{pal}.png"), plot = p, width = 220, height = 100, units = "mm")
+  
+}
+
+walk(selpals, plot_map, dat = res_point, .progress = TRUE)
 
 # Alternative 2: plot polygons with geom_sf()
 # CAVE: this is substantially slower
@@ -115,16 +129,3 @@ toc()
 # tic()
 # map_sf
 # toc()
-
-legend <- bi_legend(
-  pal = pal,
-  dim = dims,
-  xlab = "susceptibility",
-  ylab = "uncertainty",
-  size = 8
-) +
-  theme(text = element_text(family = "Source Sans Pro", size = 20))
-
-p <- map_raster + legend + plot_layout(widths = c(7, 1))
-
-ggsave(filename = "plt/bivariate_map_R.png", plot = p, width = 220, height = 100, units = "mm")
