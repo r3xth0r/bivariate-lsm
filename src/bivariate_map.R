@@ -34,7 +34,7 @@ dims <- 3
 allpals <- c("Bluegill", "BlueGold", "BlueOr", "BlueYl", "Brown", "DkBlue", "DkCyan", "DkViolet", "GrPink", "PinkGrn", "PurpleGrn", "PurpleOr")
 selpals <- c("BlueGold", "BlueOr", "DkBlue", "DkViolet", "GrPink", "PurpleOr")
 pal <- "DkViolet"
-p_pals <- lapply(allpals, \(x) bi_pal(x, dim = dims) + ggtitle(x))
+p_pals <- map(allpals, \(x) bi_pal(x, dim = dims) + ggtitle(x) + theme(text = element_text(family = "Source Sans Pro")))
 p_biscale <- wrap_plots(p_pals, tag_level = "keep")
 ggsave(filename = "plt/biscale_pals.png", plot = p_biscale, width = 200, height = 150, units = "mm")
 
