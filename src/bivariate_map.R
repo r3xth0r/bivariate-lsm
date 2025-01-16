@@ -44,7 +44,7 @@ ggsave(filename = "plt/biscale_pals.png", plot = p_biscale, width = 133, height 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 aoi <- read_sf("dat/raw/aoi/aoi_small.geojson")
-lake_mask <- read_sf("dat/interim/lakes/lakes_aoi_large.geojson") |>
+lake_mask <- read_sf("dat/interim/lakes_aoi_large.geojson") |>
   st_intersection(aoi)
 elev_mask <- read_sf("dat/interim/high_elev_mask.geojson")
 
