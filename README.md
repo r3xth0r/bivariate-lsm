@@ -15,7 +15,7 @@ Jasmin Lampert<sup>[![](https://info.orcid.org/wp-content/uploads/2019/11/orcid_
 Raphael Spiekermann<sup>[![](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0002-4772-9750)</sup>
 (2024):
 **Brief communication: Visualizing uncertainties in landslide susceptibility modeling using bivariate mapping**.
-*Journal*, Issue(No), pp-pp. [doi:](https://doi.org/)
+*Nat. Hazards Earth Syst. Sci. Discuss.* [preprint]. [doi:10.5194/nhess-2024-213](https://doi.org/10.5194/nhess-2024-213).
 
 ## Repo structure 
 
