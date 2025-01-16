@@ -127,7 +127,7 @@ plot_map <- function(dat, pal, sav = TRUE, ret = TRUE) {
 
 res <- map(selpals, plot_map, dat = res_point, .progress = TRUE)
 p_maps <- wrap_plots(res, ncol = 2)
-ggsave(filename = "plt/biscale_maps_showcase.png", plot = p_maps, width = 440, height = 200, units = "mm")
+ggsave(filename = "plt/biscale_maps_showcase.png", plot = p_maps, width = 300, height = 200, units = "mm")
 
 # Alternative 2: plot polygons with geom_sf()
 # CAVE: this is substantially slower
