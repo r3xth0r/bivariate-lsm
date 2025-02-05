@@ -6,9 +6,9 @@ stages:
 render_rayshader:
   stage: build
   before_script:
-    - R -e "install.packages(c('rayshader', 'biscale'), repos = 'http://cran.rstudio.com')"
+    - R --vanilla -e "install.packages(c('rayshader', 'biscale'), repos = 'http://cran.rstudio.com')"
   script:
-    - Rscript src/render_rayshader.R 
+    - Rscript --vanilla src/render_rayshader.R 
   artifacts:
     paths:
       - public
