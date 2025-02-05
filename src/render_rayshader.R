@@ -83,7 +83,7 @@ plot_3d(
 
 # export html
 if (export_rayshader) {
-  htmlwidgets::saveWidget(rgl::rglwidget(), "plt/rayshader.html")
+  htmlwidgets::saveWidget(rgl::rglwidget(), "public/rayshader.html")
 }
 
 # export static snapshot
