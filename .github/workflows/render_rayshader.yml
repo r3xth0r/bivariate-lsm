@@ -1,0 +1,43 @@
+name: Render rayshader
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    container:
+      image: rocker/geospatial:latest
+
+    steps:
+    - name: Checkout repository
+      id: checkout
+      uses: actions/checkout@v4
+
+    - name: Install R packages
+      id: setup
+      run: R --vanilla -e "install.packages(c('rayshader', 'biscale'), repos = 'http://cran.rstudio.com')"
+
+    - name: Render rayshader
+      id: render
+      run: Rscript --vanilla src/render_rayshader.R
+
+    - name: Upload artifacts
+      id: upload
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: public/
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub pages
+        id: deployment
+        uses: actions/deploy-pages@v4
