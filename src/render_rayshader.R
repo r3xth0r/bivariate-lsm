@@ -12,6 +12,12 @@ library("biscale")
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
+# options to export rayshader output
+export_snapshot <- TRUE
+export_rayshader <- TRUE
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
 m_brks <- c(0, 0.4481, 0.6096, 1)
 s_brks <- c(0, 0.0297, 0.0416, Inf)
 lbl <- 1:3 # c("low", "medium", "high")
@@ -76,9 +82,13 @@ plot_3d(
 # rgl::rglwidget()
 
 # export html
-# htmlwidgets::saveWidget(rgl::rglwidget(), "plt/rayshader.html")
+if (export_rayshader) {
+  htmlwidgets::saveWidget(rgl::rglwidget(), "plt/rayshader.html")
+}
 
 # export static snapshot
-render_snapshot(filename = "plt/rayshader.png", software_render = TRUE, width = 1920, height = 1080)
+if (export_snapshot) {
+  render_snapshot(filename = "plt/rayshader.png", software_render = TRUE, width = 1920, height = 1080)
+}
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
