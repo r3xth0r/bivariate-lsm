@@ -1,0 +1,14 @@
+image: rocker/geospatial:latest
+
+stages:
+  - build
+
+render_rayshader:
+  stage: build
+  before_script:
+    - R -e "install.packages(c('rayshader', 'biscale'), repos = 'http://cran.rstudio.com')"
+  script:
+    - Rscript src/render_rayshader.R 
+  artifacts:
+    paths:
+      - public
