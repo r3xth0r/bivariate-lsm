@@ -20,10 +20,13 @@ Raphael Spiekermann<sup>[![](https://info.orcid.org/wp-content/uploads/2019/11/o
 ## Repo structure 
 
 The general repo structure is as follows:
-- `cfg`: configuration files / environments
 - `dat`: data sets
 - `doc`: documentation
+- `gis`: QGIS files
 - `plt`: plots / figures
+- `public`: rayshader output
+- `R`: custom R source code (functions)
+- `renv`: R environment configuration - see [renv](https://rstudio.github.io/renv/articles/renv.html)
 - `src`: development (scripts)
 
 ## Data
